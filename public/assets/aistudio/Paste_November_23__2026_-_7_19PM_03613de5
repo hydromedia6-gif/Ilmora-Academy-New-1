@@ -1,0 +1,240 @@
+PROMPT: Redesign the Ilmora Academy Website
+You are a senior web designer and developer. Build a premium, conversion-focused, fully responsive multi-page marketing website for an online Quran academy. Build it exactly to the specification below — same content, same structure, same functionality — but you may improve the visual craft (spacing, hierarchy, imagery, polish) as long as nothing in this spec is removed.
+
+1. THE BUSINESS
+Ilmora Academy — online 1-on-1 Quran classes for families and adults in the UK and USA.
+
+Target audience: parents of children aged 4–17, adults restarting their Quran learning, new Muslims/reverts, and Pakistani/Urdu-speaking families living abroad.
+Core promise: "Structured, certified, 1-on-1 Quran education — correct Tajweed, measurable progress, no group classes."
+Primary conversion goal: get the visitor to submit the free trial booking popup form.
+Secondary goal: get them to browse audience-specific pages (Kids / Adults / Reverts / Pakistani).
+Brand voice: warm, authoritative, calm, faith-respectful. Speaks directly to the reader ("you", "your child"). Never salesy or gimmicky. Uses the word Deen, Tajweed, Makharij, Qari, JazakAllah Khair naturally. Avoids any music, gambling, or immodest imagery.
+
+2. TECH & STRUCTURE
+React + Tailwind CSS (or equivalent component framework), client-side routing.
+Pages: / (Home), /Kids, /Adults, /Reverts, /Pakistani, /About, plus a 404 page.
+Every page is a stack of full-width sections, max content width ~1280px, horizontal padding 16–32px.
+All motion subtle and performant: fade + slide-up on scroll (once only), 0.5–0.7s, staggered 0.08–0.1s for grids. No parallax, no auto-carousels.
+Must be mobile-first and flawless at 375px, 768px, 1280px, 1458px.
+3. DESIGN SYSTEM
+Colours
+
+Background black: #0A0A0A
+Charcoal: #1A1A1A · Dark grey: #2A2A2A
+Gold (primary accent): #C6A84A · Light gold (hover): #D4BA6A · Deep gold: #A88F3A
+Body text on dark: #D1D5DB / #9CA3AF; headings on dark: #FFFFFF
+Body text on light: #6B7280; headings on light: #0A0A0A
+Support tints: amber-50 for emotional callout boxes, red-50 for pain points, gray-50 for neutral cards
+Typography
+
+Headings: Playfair Display (serif), 700 weight, tight leading (~1.1), large scale — h1 48–72px, h2 36–48px, h3 18–24px
+Body & UI: Inter, 300–600 weight
+Eyebrow labels: Inter, 12–14px, uppercase, letter-spacing widest, gold
+Signature elements (use consistently)
+
+Gold gradient text for the key phrase in every headline: linear-gradient(135deg, #C6A84A, #D4BA6A, #C6A84A) clipped to text.
+Gold glow button: gold background, black bold text, rounded-xl, soft gold outer glow 0 0 20px rgba(198,168,74,0.3), hover lifts 2px and glow intensifies.
+Islamic geometric pattern: very subtle (4% opacity) repeating 8-point star SVG overlay on all black sections.
+Glass card: rgba(255,255,255,0.05) + 10px backdrop blur + 1px border rgba(198,168,74,0.15).
+Gold divider: 2px horizontal line fading in from transparent → gold → transparent.
+Radial gold blur glows (5% opacity, 100–150px blur) positioned behind dark sections for depth.
+Rounded corners: 12px (small), 16px (medium), 24px (large cards), 32px (feature panels). Pills for badges.
+Numbered step badges: black square with gold number, turning gold-on-black on hover.
+Section rhythm: alternate dark (#0A0A0A) → white → dark → gray-50, so the page breathes. Every section 80–112px vertical padding.
+
+4. GLOBAL ELEMENTS
+Fixed navigation bar (transparent at top, becomes #0A0A0A/95% + blur + bottom hairline after 50px scroll):
+
+Left: gold book icon in a gold-tinted rounded square + wordmark ILMORA (Playfair Display, white, wide tracking).
+Right (desktop): links — For Kids · For Adults · For Reverts · 🇵🇰 Pakistani Families · About — grey text, gold on hover. Then a gold "Free Trial" button that opens the booking popup.
+Mobile: hamburger → full-width dropdown panel with the same links stacked + a full-width gold "Claim Free Trial" button.
+The wordmark links to /.
+Footer (near-black #050505, top hairline):
+
+Left: gold book icon + "ILMORA ACADEMY" in Playfair Display.
+Centre: Privacy Policy · Terms of Service · Contact Us (grey, gold on hover — each must link somewhere real).
+Right: © [current year] Ilmora Academy. All rights reserved.
+Booking popup (the most important component on the site) — opens from every CTA button on every page, without navigating away:
+
+Centred modal, max-width ~520px, #111111 card, 1px gold/20% border, 24px radius, thin gold gradient bar along the very top, dark blurred backdrop (black/80 + blur), close X top-right, click-outside and X both close it.
+Header: gold book icon + "Book Your Free Trial" (Playfair) + subline "30-min 1-on-1 session • No obligation".
+Fields:
+Full Name (required)
+Email (required) and WhatsApp / Phone (placeholder "+44 or +1…") side by side
+Who is the class for? (required) — dropdown: My Child / Myself (Adult) / Myself (New Muslim / Revert) / Multiple Family Members
+Student Age and Your Timezone (required) side by side — Age: 4–7 / 8–12 / 13–17 / 18+ (Adult); Timezone: 🇬🇧 UK (GMT/BST) / 🇺🇸 USA – East (EST) / 🇺🇸 USA – Central (CST) / 🇺🇸 USA – West (PST) / Other
+Full-width gold glow button: "Claim My Free Trial →"
+Micro-copy under button: "No credit card required • 100% free • We'll contact you within 24hrs"
+All inputs: dark transparent fields, 1px white/10% border, gold border on focus, white text, grey placeholder.
+On submit: replace the form with a success state — large gold check in a circle, "JazakAllah Khair!", "Your free trial request has been received.", "A member of our team will reach out within 24 hours to confirm your session.", three small checkmarked lines (30-min 1-on-1 class booked / Level assessment included / No payment needed), and a "Close" outline button. Closing resets the form.
+5. PAGE 1 — HOME (/)
+Sections in this exact order:
+
+5.1 Hero (dark)
+Small pill badge: book icon + "ILMORA ACADEMY"
+H1: "Help Your Child — Or Yourself — Read The Quran With Confidence, Clarity & Correct Tajweed" (the last two lines in gold gradient)
+Sub-headline (larger, light grey): "Even If You're Starting From Zero."
+Paragraph: "At Ilmora Academy, we provide structured 1-on-1 online Quran classes led by certified Qaris and native Arab tutors — specifically designed for families and adults in the UK & USA who want serious, measurable progress."
+Primary gold glow button: "Claim Your FREE Quran Clarity Session Now" → opens popup.
+Under it, red pulsing dot + "Limited Evening Slots Available For UK & USA Students"
+Four trust badges in a 2×2 grid with gold icons: Certified Male & Female Teachers · Native Arab Tutors Available · 100% 1-on-1 Personalized Classes · Flexible UK & USA Timings
+Right column (desktop only): glass card containing a Quran-teaching photograph (open Quran on a wooden stand, or a teacher and child studying, warm gold lighting), with the Arabic "بِسْمِ ٱللَّهِ" in gold gradient beneath it, caption "1-on-1 Live Quran Sessions", a green pulsing dot + "Live Classes Available Now", and a 3-stat row: 500+ Students · 98% Satisfaction · 15+ Countries.
+5.2 The Problem (white background)
+Eyebrow: "The Reality Most Parents Face"
+H2: "If You're Living In The UK or USA…"
+Sub: "You already know how difficult it is to ensure your child stays connected to the Quran."
+Four grey pills: "Between school." "Between distractions." "Between social media." "Between busy work schedules."
+Line: "Quran learning slowly becomes "something we'll fix later."" + "And that 'later' keeps getting delayed."
+H3: "Many parents tell us:" then 5 quote cards (grey, gold message icon) — "My child reads, but I don't know if it's correct." / "I'm not confident about their Tajweed." / "I tried a few online teachers, but it wasn't structured." / "The teacher kept changing." / "There was no progress tracking."
+Amber callout box: "And deep down… there's a quiet worry:" + large italic serif quote: "What if my child grows up without reading the Quran properly?"
+Dark rounded panel: "For Adults & Reverts, It's Even More Personal." / "You may feel:" with 4 gold-bulleted items — Embarrassed about pronunciation · Afraid to read aloud in front of others · Unsure where to restart · Overwhelmed by Tajweed rules
+H3: "Most Online Quran Academies Offer:" then 6 red-tinted cards with icons — Group classes with limited correction · Rotating teachers · No structured roadmap · Generic lesson plans · Minimal accountability · No Western timezone focus
+Closing line: "That's exactly why Ilmora Academy exists."
+5.3 Why We're Different (dark)
+Eyebrow "Why Ilmora Academy Is Different" / H2 "We Built Something Completely Different."
+Two columns:
+Left glass card: "We Created A Structured, Step-by-Step Quran Mastery Framework™ Designed Specifically For:" + checklist — Busy Western families · English-speaking students · Reverts · Children needing personal attention. Then a divider and three statements: "We do not rush." / "We do not rotate randomly." / "We do not leave progress to chance."
+Right: "Every Student Receives:" + 5 glass rows with gold check circles — Dedicated 1-on-1 sessions · Consistent assigned teacher · Structured syllabus · Tajweed-focused correction · Regular progress feedback. Below, a gold-tinted box: "This is not casual tutoring." / "This is guided Quran education."
+Four credential cards across: Certified Qaris ("Every teacher holds official Quran recitation certification") · Native Arab Tutors ("Fluent Arabic speakers who understand Tajweed natively") · Tajweed-Certified ("Specialized training in all Tajweed rules & live application") · Male & Female Teachers ("Choose what's comfortable for your family's needs")
+5.4 Our Method (white)
+Eyebrow "Our Proven System" / H2 "The Ilmora Tajweed Mastery Framework™" / "Here's exactly how we help every student improve — step by step."
+Five cards in a row (stack on mobile), each with a numbered badge, icon, title, bulleted points, and a gold italic tagline:
+Detailed Assessment — Current reading level · Tajweed knowledge · Pronunciation gaps (Makharij) · Fluency level · Memorization goals — "This prevents wasted months."
+Foundation Correction — Letter articulation · Common pronunciation mistakes · Basic Tajweed rule application — "Strong foundation = faster progress later."
+Structured Tajweed — Rules with practical application · Real-time correction · Repetition with understanding · Proper breathing & flow — "Not memorization — understanding."
+Fluency & Confidence — From hesitant reading · To smooth, confident recitation — "Parents notice improvement within weeks."
+Progress Tracking — Track performance · Adjust teaching speed · Send parent updates · Provide feedback reports — "Accountability creates transformation."
+Closing line: "This accountability is what creates transformation."
+5.5 Teachers (light grey)
+Eyebrow "Our Teachers" / H2 "We Take Teacher Quality Seriously."
+Left: "All teachers are:" + 5 white rows with black/gold icon tiles — Certified Qaris · Tajweed-certified · Experienced in online teaching · Fluent in English · Trained to work with Western students
+Right: dark panel "We offer:" + gold checks — Male teachers for boys & men · Female teachers for girls & women · Native Arab tutors available. Below, a gold-tinted note: "We also prioritize patience, character, and communication skills because Quran learning is not just technical." + "It's spiritual."
+5.6 Free Trial Offer (dark, id="offer-section") — the main conversion section
+Gold pill: gift icon + "LIMITED TIME OFFER"
+H2: "FREE Quran Clarity Session"
+Price line: $97 Value — Absolutely FREE
+Sub: "Before you enroll… we invite you to experience our system. No obligation. No pressure. Just clarity."
+Large glass card: "When you enroll today, you receive:" + 5 gold-checked items — 30-Minute Live 1-on-1 Class · Tajweed Evaluation · Personalized Learning Roadmap · Teacher Compatibility Matching · Flexible Schedule Planning
+Gold glow button: "Book Your Free Trial Today →" → opens popup.
+5.7 Pricing (white)
+Eyebrow "Investment" / H2 "Premium Quality. Accessible Pricing."
+Sub: "Many academies charge $90–$150/month for certified 1-on-1 teaching. At Ilmora Academy, you get more for less."
+Single dark pricing card (centred, max ~480px): "ILMORA ACADEMY PLAN" eyebrow, $70 /month large, "That's less than $2.50 per day.", "This is not an expense. It's an investment in your child's foundation.", gold divider, six gold-checked features — 1-on-1 live sessions · Certified Qaris · Native Arab teachers · Male & female options · Flexible scheduling · Progress tracking — then gold glow button "Start With FREE Trial →" → opens popup.
+5.8 Who It's For (white)
+Eyebrow "Is This For You?" / H2 "This Is Perfect For:"
+6 cards in a 3×2 grid, each a grey rounded card with a black→gold icon tile: Parents who want structured Quran education · Families in UK & USA · Adults restarting their Quran journey · Reverts beginning from scratch · Students wanting Tajweed correction · Busy professionals needing flexible timings
+5.9 Guarantees (light grey)
+Gold shield icon in a circle, eyebrow "Zero Risk", H2 "We Remove All Risk."
+2×2 grid of white cards:
+7-Day Satisfaction Guarantee — "If you're not happy in the first week, we refund you. No questions asked."
+Teacher Replacement Guarantee — "Not comfortable? We assign a new certified tutor immediately."
+Flexible Scheduling Guarantee — "Missed class? Reschedule easily — life happens, we understand."
+Progress Assurance — "If your child doesn't improve, we re-evaluate and adjust strategy at no extra cost."
+5.10 Scarcity (dark)
+Red pill: "LIMITED ENROLLMENT"
+H2: "We Only Onboard A Limited Number Of New Students Each Month"
+"To maintain the highest quality of education, we cap enrollment every month."
+Two info pills: "⚡ UK & USA evening slots fill the fastest" (gold) and "🕐 Once slots are full, enrollment closes" (grey)
+Gold glow button: "Secure Your Spot Now →" → opens popup.
+5.11 Testimonials (dark)
+Eyebrow "Success Stories" / H2 "What Our Families Say"
+3 glass cards, each with a large quote mark, 5 gold stars, the quote, and an avatar circle (initial) + name + location:
+Sarah A., London, UK — "My daughter's Tajweed improved dramatically in just 2 months. The 1-on-1 attention makes all the difference. We tried group classes before — this is worlds apart."
+Ahmed K., New York, USA — "As a revert, I was nervous about my pronunciation. My teacher is incredibly patient and encouraging. I'm reading Surah Al-Baqarah now with confidence!"
+Fatima M., Birmingham, UK — "The progress tracking is amazing. I know exactly where my son stands every week. The scheduling flexibility is perfect for our busy family life."
+5.12 FAQ (white, accordion, one open at a time, first open by default)
+Is it truly 1-on-1? — "Yes. Every session is fully personalized and private. Your child (or you) gets the teacher's full, undivided attention — no group distractions, no shared time."
+What platform do you use? — "We use Zoom or Google Meet with secure private links. Sessions are easy to join from any device — phone, tablet, or computer."
+Can siblings share one class? — "Each student receives individual sessions for maximum focus and personalized correction. Shared classes would reduce the effectiveness of our system."
+Is it suitable for beginners? — "Yes. We teach from Noorani Qaida all the way to advanced Tajweed. Whether you're starting from scratch or correcting existing mistakes — we handle both."
+Are there female teachers? — "Yes, available upon request. We have experienced female teachers for sisters, daughters, and women who prefer to learn with a female instructor."
+Can I change my schedule later? — "Yes, flexibility is part of our structure. If your availability changes, simply inform us and we'll arrange a time that works for you."
+What if I'm not satisfied? — "We offer a 7-Day Satisfaction Guarantee. If you're not happy in the first week, we refund you — no questions asked. We also offer immediate teacher replacement if needed."
+Open items get a gold-tinted background, gold border, and a rotated gold chevron in a circle.
+5.13 Final CTA (dark)
+Gold book icon in a circle
+H2: "Your Child's Quran Education Should Not Be Delayed."
+"Your own Quran confidence should not wait another year."
+"The longer you wait… the harder it becomes to correct mistakes. Start today. Experience Ilmora Academy with a FREE Trial Class."
+Red pill: "Limited UK/USA Slots Available"
+Large gold glow button: "Claim Your Free Quran Clarity Session Now →" → opens popup.
+"No credit card required • 100% free • No obligation"
+6. PAGE 2 — FOR KIDS (/Kids)
+Hero (dark): pill "FOR KIDS" → H1 "Online Quran Classes For Kids In UK & USA" → "Your child deserves structured Quran education — not random lessons. We build a real foundation." → gold button "Book Free Trial For My Child →" (opens popup). Optional: Quran/child-learning image to the right.
+What We Focus On (white): eyebrow "Our Kids Program", H2 "What We Focus On", 6 cards in 3 columns — Noorani Qaida Mastery ("The correct starting point for every young learner.") · Clear Makharij Correction ("Proper letter articulation from day one.") · Step-by-Step Tajweed ("Rules introduced gradually at the child's pace.") · Confidence Building ("Positive reinforcement so children love learning.") · Parental Progress Updates ("You always know how your child is improving.") · Flexible After-School Timing ("Evening and weekend slots for UK & USA families.")
+We Ensure (dark): 5 glass rows with gold checks — Female teachers available for daughters · Patient and friendly learning environment · Flexible after-school timing · Regular progress feedback to parents · 1-on-1 sessions — no group distractions
+Parent proof + CTA (white): amber box "Parents receive regular updates so they can see:" + italic serif "My child is actually improving — week by week." → H2 "Start Your Child's Journey Today." → gold button "Claim Free Trial Class →" → "No credit card required • 100% free • No obligation"
+7. PAGE 3 — FOR ADULTS (/Adults)
+Hero (dark): pill "FOR ADULTS" → H1 "Online Quran Classes For Adults — Private & Judgment-Free" → "It's never too late to improve your Quran. Our private 1-on-1 online sessions allow adults to improve in a comfortable and judgment-free environment." → button "Start My Free Trial →"
+Focus (white): eyebrow "Our Adult Program", H2 "We Focus On Real Results", 4 cards — Tajweed Correction ("We identify and fix years of pronunciation mistakes — properly.") · Fluency Improvement ("From hesitant reading to smooth, confident recitation.") · Recitation Confidence ("Read aloud without embarrassment or hesitation.") · Gradual Learning Pace ("We move at your speed — no pressure, no rushing.")
+Perfect For (dark): H2 "This Program Is Perfect For:" + 4 glass rows — Professionals with busy schedules · Parents who want to improve alongside their children · Individuals correcting long-standing mistakes · Those who stopped learning and want to restart. Then: "All sessions are" + "Private. Personalized. Judgment-Free."
+CTA (white): H2 "Your Quran Journey Continues Today." → "Experience the difference with a completely free 1-on-1 trial class." → "Claim My Free Trial Class →"
+8. PAGE 4 — FOR REVERTS (/Reverts)
+Hero (dark): pill "FOR REVERTS" → H1 "Beginner-Friendly Quran Classes For New Muslims" → "Starting from zero? You are in the right place." → "We guide you gently and clearly — at a pace that feels comfortable, never overwhelming." → "Begin My Quran Journey →"
+Warmth (white): amber box — "We understand that starting can feel intimidating." + "No pressure. No embarrassment. Just growth."
+Program (light grey): eyebrow "Revert Program", H2 "Our Revert Program Includes:", 4 cards — Arabic Alphabet Introduction ("We start from the very beginning — every letter, clearly explained.") · Proper Pronunciation Practice ("Makharij (articulation points) introduced step by step.") · Basic Tajweed Understanding ("Simple rules introduced gradually — no overwhelm.") · Slow & Supportive Teaching ("We move at your pace. There is absolutely no pressure.")
+Safety (dark): H2 "At Ilmora Academy, You Are Safe." + 5 glass rows — No embarrassment — ever · No judgment from your teacher · Questions are always welcome · Completely private 1-on-1 sessions · English-speaking teachers available
+CTA (white): H2 "Your Journey Begins With One Class." → "Book your free 30-minute 1-on-1 trial. No pressure. No commitment." → "Start For Free Today →"
+9. PAGE 5 — PAKISTANI & URDU-SPEAKING FAMILIES (/Pakistani)
+Hero (dark): pill "🇵🇰 FOR PAKISTANI & URDU-SPEAKING FAMILIES" → H1 "Online Quran Classes For Pakistani Families Living In UK & USA" → "Raising children abroad is not easy." → "You want them to grow in a Western country… but stay connected to their Deen. At Ilmora Academy, we help Pakistani and Urdu-speaking families ensure their children — and themselves — learn the Quran with correct Tajweed, in a comfortable and culturally understanding environment." → "Book Free Trial For My Family →"
+We understand (white): H2 "We Understand Something Many Academies Don't." / "Living abroad creates unique challenges:" + 5 red-tinted cards — Children grow up in English-speaking schools · Islamic education becomes harder to manage · Masjid timings don't always match · Parents worry about weak Tajweed · Language barriers make communication difficult. Then amber box: "Sometimes parents feel:" + "I want a teacher who understands our background." + gold line "That's exactly why Ilmora Academy is different."
+Cultural comfort (dark): eyebrow "Cultural Comfort", H2 "Urdu & Cultural Understanding Matters." / "We create a familiar learning environment — even while you live thousands of miles from Pakistan." + 5 glass rows — Parents can communicate in Urdu · Children can ask questions comfortably · Teachers understand Pakistani family values · We teach with patience and respect · We know the expectations South Asian parents have
+Perfect For (light grey): 6 cards — Pakistani families living in UK · Pakistani families living in USA · South Asian households wanting Urdu support · Parents worried about Tajweed mistakes · Families who want structured Islamic learning · Mothers who prefer female teachers for daughters
+What We Offer (white): 6 icon cards — Certified Qaris · Tajweed-certified teachers · Male & Female instructors · 1-on-1 private sessions · Flexible UK & USA evening timings · Free trial class. Then 4 pills: "No group distractions." "No rushed lessons." "No confusion." "Just proper Quran education." (last one dark with gold text)
+Two panels (dark):
+For Your Children — "We focus on:" Noorani Qaida · Makharij correction · Step-by-step Tajweed · Short Surahs for Salah · Confidence building · Regular parent updates. Footer: "Your child will not just 'read.'" / "They will improve properly."
+For Parents & Adults — quote box: "Many parents abroad say:" / "I wish I could fix my own Tajweed too." → "You can." → Private · Comfortable · Judgment-free · Flexible around work schedule → "You can speak Urdu if needed." / "We move at your pace."
+Pricing (white): H2 "Affordable & Structured" → centred dark card: "For only:" $70/month, divider, 5 checks (1-on-1 classes · Certified teachers · Personalized attention · Flexible scheduling · Progress tracking), gold line "Less than $2.50 per day for your child's Quran foundation."
+Free trial (light grey): H2 "Free Trial Class" / "Before you decide, experience our teaching yourself." + white card "Your FREE Trial Includes:" — 30-minute 1-on-1 class · Level assessment · Teacher introduction · Learning plan discussion — footer "No obligation · No pressure · Just clarity" → "Book My Free Trial Class →"
+Final message (dark): H2 "Your children are growing up in a different country." / "Their Islamic identity needs support." + three lines: "Give them strong Tajweed." "Give them confidence." "Give them connection to the Quran." + red pill "Limited UK & USA Evening Slots Available" + "Claim Your Free Trial Now →"
+10. PAGE 6 — ABOUT (/About)
+Hero (dark): H1 introducing Ilmora Academy's mission — "Structured Quran education, built on patience, correction and accountability." + short intro + gold CTA "Book a Free Trial".
+The problem we exist to solve (white): short paragraph set on unstructured, rotating-teacher online academies.
+Our vision (dark): that every student reads the Quran correctly and confidently, with a consistent teacher and a measurable roadmap.
+Teaching philosophy (white): four value cards — Structured · Patient · Correct · Measurable — each with a short description.
+Our teachers (light grey): five qualification points — official recitation certification, Tajweed specialisation, native/near-native Arabic fluency, online teaching experience, training to teach Western students.
+Our commitments (dark): four commitments — consistent assigned teacher, honest progress reporting, no rushing to "finish", respect for each family's comfort (male/female teacher choice).
+CTA (white): "Experience the difference — book your free 1-on-1 trial." + gold button.
+11. FUNCTIONALITY SPEC — every button must work
+Button / element	Behaviour
+"Free Trial" (navbar, desktop + mobile)	Opens booking popup
+Every gold CTA on Home (Hero, Offer, Pricing, Urgency, Final CTA)	Opens booking popup
+Every gold CTA on Kids / Adults / Reverts / Pakistani / About	Opens booking popup
+Nav links (For Kids, For Adults, For Reverts, Pakistani, About)	Navigate to that page; mobile menu closes
+Wordmark / logo	Navigate to Home
+Popup close X, backdrop click	Close and reset form
+Popup submit	Validate required fields, then show success state
+Footer Privacy / Terms / Contact	Real destinations (dedicated pages, or email/WhatsApp links)
+FAQ row	Toggles open/closed, animated height
+Any in-page anchor (e.g. "#offer-section")	Smooth-scrolls to that section
+Rules: no dead href__="#" links, no buttons that do nothing, no forms that silently fail. If a backend isn't connected, show the success state and tell the owner where submissions should go (email / WhatsApp / Google Sheet / CRM).
+
+12. IMAGERY
+Use warm, respectful Quran-teaching photography: open Quran on a carved wooden rehal, hands on a page, a child reading with a teacher, soft window light, gold/amber tones.
+Place imagery on the right of split-content sections (hero, about, offer), never left.
+Keep every dark-section image inside a glass card with a subtle gold glow behind it.
+No faces of women without hijab, no depictions of prophets, no Arabic calligraphy errors, no Western stock-photo clichés (no headset call-centre shots).
+Every image must have descriptive alt text for SEO/accessibility.
+13. RESPONSIVE & ACCESSIBILITY
+Mobile: single column, stacked; multi-column grids become 1 (or 2 for small cards); hero visual hidden below 1024px.
+Tap targets ≥44px; body text ≥16px on mobile; no horizontal scroll at any width.
+Visible keyboard focus rings (gold), ESC closes the popup, labels tied to every input, aria-expanded on the FAQ and mobile menu, sufficient contrast (white on #0A0A0A; never gold body text on white).
+14. SEO & META
+<title>: "Ilmora Academy | Online 1-on-1 Quran Classes for Kids & Adults — UK & USA"
+Meta description: "Structured 1-on-1 online Quran classes with certified Qaris and native Arab tutors. Tajweed correction, progress tracking and flexible UK/USA timings. Book a free trial class."
+One <h1> per page; logical h2/h3 order; descriptive alt text; Open Graph + Twitter card tags; canonical URL per page; JSON-LD EducationalOrganization schema with name, description, areaServed (GB, US), and the $70/month offer.
+15. WHAT NOT TO DO
+Don't remove or reword any of the specified copy — it's conversion-tested.
+Don't add features beyond this spec (no blog, no login, no cart, no chatbot, no live chat widget).
+Don't use purple/blue gradients, neon, drop-shadow-heavy cards, or generic SaaS illustrations — the palette is black, white, and gold only.
+Don't auto-play video or audio.
+Don't make the popup a page redirect — it must stay a popup over the current page.
+16. ACCEPTANCE CHECKLIST
+ All 6 pages exist and are reachable from the nav
+ Every CTA opens the popup form; the popup validates and shows the success state
+ All 14 Home sections present in the specified order with the specified copy
+ Alternating dark/light rhythm, gold gradient headline phrases, glass cards, Islamic pattern overlay
+ Playfair Display headings + Inter body everywhere
+ Works perfectly at 375px, 768px and 1458px
+ No dead links, no non-functional buttons, no placeholder lorem text
+ Alt text, meta tags and one h1 per page

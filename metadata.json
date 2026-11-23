@@ -1,0 +1,6 @@
+{
+  "name": "Ilmora Academy",
+  "description": "Structured 1-on-1 online Quran classes with certified Qaris and native Arab tutors for families and adults in the UK and USA.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
