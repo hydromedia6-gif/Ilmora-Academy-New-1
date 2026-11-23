@@ -36,6 +36,7 @@ export function BookingModal({
     classFor: defaultAudience,
   });
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const firstInputRef = useRef<HTMLInputElement>(null);
 
@@ -108,10 +109,11 @@ export function BookingModal({
     return Object.keys(nextErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate() || submitting) return;
 
+    setSubmitting(true);
     try {
       const existing = JSON.parse(
         localStorage.getItem('ilmora_trial_requests') || '[]'
@@ -125,7 +127,22 @@ export function BookingModal({
       // Ignore storage errors in restricted environments
     }
 
-    setSubmitted(true);
+    try {
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), 5000);
+      await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'trial', ...form }),
+        signal: controller.signal,
+      });
+      window.clearTimeout(timeoutId);
+    } catch {
+      // Fall back gracefully when hosted as pure static build without /api/lead
+    } finally {
+      setSubmitting(false);
+      setSubmitted(true);
+    }
   };
 
   if (!isOpen) return null;
@@ -355,9 +372,10 @@ export function BookingModal({
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="gold-glow-btn min-h-[48px] w-full cursor-pointer rounded-xl px-6 py-3.5 text-sm sm:text-base"
+                    disabled={submitting}
+                    className="gold-glow-btn min-h-[48px] w-full cursor-pointer rounded-xl px-6 py-3.5 text-sm disabled:cursor-not-allowed disabled:opacity-70 sm:text-base"
                   >
-                    Claim My Free Trial
+                    {submitting ? 'Submitting Request...' : 'Claim My Free Trial'}
                   </button>
                   <p className="mt-3 text-center text-xs text-[#9CA3AF]">
                     No credit card required · 100% free · We will contact you within 24hrs

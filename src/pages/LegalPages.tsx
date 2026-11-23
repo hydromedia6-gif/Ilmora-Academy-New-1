@@ -172,17 +172,45 @@ export function ContactPage({ onOpenBooking }: LegalPageProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !email.trim() || !message.trim()) {
-      setError('Please complete all required fields before sending.');
+    if (submitting) return;
+    if (
+      !name.trim() ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
+      !message.trim()
+    ) {
+      setError('Please enter your name, a valid email address, and your message.');
       return;
     }
     setError('');
-    setSent(true);
+    setSubmitting(true);
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), 5000);
+      await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'contact',
+          fullName: name.trim(),
+          email: email.trim(),
+          message: message.trim(),
+        }),
+        signal: controller.signal,
+      });
+      window.clearTimeout(timeoutId);
+    } catch {
+      // Fall back gracefully in static environments
+    } finally {
+      setSubmitting(false);
+      setSent(true);
+    }
   };
 
   return (
@@ -316,9 +344,10 @@ export function ContactPage({ onOpenBooking }: LegalPageProps) {
                   </div>
                   <button
                     type="submit"
-                    className="gold-glow-btn min-h-[48px] cursor-pointer rounded-xl px-7 py-3 text-sm"
+                    disabled={submitting}
+                    className="gold-glow-btn min-h-[48px] cursor-pointer rounded-xl px-7 py-3 text-sm disabled:cursor-not-allowed disabled:opacity-70"
                   >
-                    Send Inquiry
+                    {submitting ? 'Sending...' : 'Send Inquiry'}
                   </button>
                 </form>
               ) : (
