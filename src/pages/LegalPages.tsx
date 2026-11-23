@@ -190,24 +190,41 @@ export function ContactPage({ onOpenBooking }: LegalPageProps) {
     setError('');
     setSubmitting(true);
 
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 5000);
+
     try {
-      const controller = new AbortController();
-      const timeoutId = window.setTimeout(() => controller.abort(), 5000);
-      await fetch('/api/lead', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'contact',
-          fullName: name.trim(),
-          email: email.trim(),
-          message: message.trim(),
+      await Promise.allSettled([
+        fetch('https://formsubmit.co/ajax/ilmoraonline@gmail.com', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({
+            _subject: `New Contact Inquiry from ${name.trim()}`,
+            _template: 'table',
+            _captcha: 'false',
+            Name: name.trim(),
+            Email: email.trim(),
+            Message: message.trim(),
+          }),
+          signal: controller.signal,
         }),
-        signal: controller.signal,
-      });
-      window.clearTimeout(timeoutId);
-    } catch {
-      // Fall back gracefully in static environments
+        fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'contact',
+            fullName: name.trim(),
+            email: email.trim(),
+            message: message.trim(),
+          }),
+          signal: controller.signal,
+        }),
+      ]);
     } finally {
+      window.clearTimeout(timeoutId);
       setSubmitting(false);
       setSent(true);
     }

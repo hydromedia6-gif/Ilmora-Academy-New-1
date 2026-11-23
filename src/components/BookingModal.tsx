@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Check, X } from 'lucide-react';
+import { Check, ChevronDown, X } from 'lucide-react';
 import { AudiencePreset } from '../types/booking';
 
 interface BookingModalProps {
@@ -25,6 +25,148 @@ const INITIAL_FORM: FormState = {
   studentAge: '',
   timezone: '',
 };
+
+const AUDIENCE_OPTIONS: { value: AudiencePreset; label: string }[] = [
+  { value: 'My Child', label: 'My Child' },
+  { value: 'Myself (Adult)', label: 'Myself (Adult)' },
+  {
+    value: 'Myself (New Muslim / Revert)',
+    label: 'Myself (New Muslim / Revert)',
+  },
+  { value: 'Multiple Family Members', label: 'Multiple Family Members' },
+];
+
+const AGE_OPTIONS = [
+  { value: '4 to 7', label: '4 to 7' },
+  { value: '8 to 12', label: '8 to 12' },
+  { value: '13 to 17', label: '13 to 17' },
+  { value: '18+ (Adult)', label: '18+ (Adult)' },
+];
+
+const TIMEZONE_OPTIONS = [
+  { value: 'UK (GMT/BST)', label: 'UK (GMT/BST)' },
+  { value: 'USA East (EST)', label: 'USA East (EST)' },
+  { value: 'USA Central (CST)', label: 'USA Central (CST)' },
+  { value: 'USA West (PST)', label: 'USA West (PST)' },
+  { value: 'Other', label: 'Other' },
+];
+
+interface DarkSelectProps {
+  id: string;
+  label: string;
+  placeholder: string;
+  value: string;
+  options: { value: string; label: string }[];
+  onChange: (value: string) => void;
+  error?: string;
+}
+
+function DarkSelect({
+  id,
+  label,
+  placeholder,
+  value,
+  options,
+  onChange,
+  error,
+}: DarkSelectProps) {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleOutside = (e: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutside);
+    document.addEventListener('keydown', handleEsc, true);
+    return () => {
+      document.removeEventListener('mousedown', handleOutside);
+      document.removeEventListener('keydown', handleEsc, true);
+    };
+  }, [open]);
+
+  const selectedOption = options.find((o) => o.value === value);
+
+  return (
+    <div ref={containerRef} className="relative">
+      <label
+        htmlFor={id}
+        className="mb-1.5 block text-xs font-medium text-[#D1D5DB]"
+      >
+        {label} <span className="text-[#C6A84A]">*</span>
+      </label>
+
+      <button
+        id={id}
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        onClick={() => setOpen((prev) => !prev)}
+        className={`flex min-h-[44px] w-full cursor-pointer items-center justify-between rounded-xl border px-3.5 py-2.5 text-left text-sm transition-colors focus:outline-none ${
+          open
+            ? 'border-[#C6A84A] bg-[#171C1B] ring-1 ring-[#C6A84A]'
+            : 'border-white/15 bg-[#171C1B] hover:border-white/25 focus:border-[#C6A84A] focus:ring-1 focus:ring-[#C6A84A]'
+        }`}
+      >
+        <span className={selectedOption ? 'text-white' : 'text-[#9CA3AF]'}>
+          {selectedOption ? selectedOption.label : placeholder}
+        </span>
+        <ChevronDown
+          className={`h-4 w-4 shrink-0 text-[#C6A84A] transition-transform duration-150 ${
+            open ? 'rotate-180' : ''
+          }`}
+        />
+      </button>
+
+      {open && (
+        <ul
+          role="listbox"
+          aria-labelledby={id}
+          className="absolute left-0 right-0 z-50 mt-1.5 max-h-56 overflow-y-auto rounded-xl border border-[#C6A84A]/40 bg-[#171C1B] py-1.5 shadow-2xl"
+        >
+          {options.map((opt) => {
+            const isSelected = opt.value === value;
+            return (
+              <li key={opt.value} role="option" aria-selected={isSelected}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onChange(opt.value);
+                    setOpen(false);
+                  }}
+                  className={`flex min-h-[40px] w-full cursor-pointer items-center justify-between px-3.5 py-2 text-left text-sm transition-colors ${
+                    isSelected
+                      ? 'bg-[#C6A84A]/20 font-semibold text-[#D4BA6A]'
+                      : 'text-white hover:bg-white/10'
+                  }`}
+                >
+                  <span>{opt.label}</span>
+                  {isSelected && (
+                    <Check className="h-4 w-4 shrink-0 text-[#C6A84A]" />
+                  )}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      {error && <p className="mt-1 text-xs text-red-400">{error}</p>}
+    </div>
+  );
+}
 
 export function BookingModal({
   isOpen,
@@ -127,19 +269,41 @@ export function BookingModal({
       // Ignore storage errors in restricted environments
     }
 
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 5000);
+
     try {
-      const controller = new AbortController();
-      const timeoutId = window.setTimeout(() => controller.abort(), 5000);
-      await fetch('/api/lead', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'trial', ...form }),
-        signal: controller.signal,
-      });
-      window.clearTimeout(timeoutId);
-    } catch {
-      // Fall back gracefully when hosted as pure static build without /api/lead
+      await Promise.allSettled([
+        // Direct email forwarding to ilmoraonline@gmail.com via FormSubmit AJAX
+        fetch('https://formsubmit.co/ajax/ilmoraonline@gmail.com', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({
+            _subject: `New Free Trial Booking: ${form.fullName} (${form.timezone})`,
+            _template: 'table',
+            _captcha: 'false',
+            'Full Name': form.fullName,
+            Email: form.email,
+            'WhatsApp / Phone': form.phone,
+            'Class For': form.classFor,
+            'Student Age': form.studentAge,
+            Timezone: form.timezone,
+          }),
+          signal: controller.signal,
+        }),
+        // Vercel serverless endpoint for Resend / CRM webhook integration
+        fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'trial', ...form }),
+          signal: controller.signal,
+        }),
+      ]);
     } finally {
+      window.clearTimeout(timeoutId);
       setSubmitting(false);
       setSubmitted(true);
     }
@@ -148,7 +312,7 @@ export function BookingModal({
   if (!isOpen) return null;
 
   const inputBaseClass =
-    'w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-white placeholder-[#9CA3AF]/60 transition-colors focus:border-[#C6A84A] focus:outline-none focus:ring-1 focus:ring-[#C6A84A]';
+    'w-full min-h-[44px] rounded-xl border border-white/15 bg-[#171C1B] px-3.5 py-2.5 text-sm text-white placeholder-[#9CA3AF]/70 transition-colors focus:border-[#C6A84A] focus:outline-none focus:ring-1 focus:ring-[#C6A84A]';
 
   return (
     <div
@@ -158,13 +322,13 @@ export function BookingModal({
       onClick={(e) => {
         if (e.target === e.currentTarget) handleResetAndClose();
       }}
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/80 p-4 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/80 p-4 py-6 backdrop-blur-md sm:items-center sm:py-8"
     >
-      <div className="relative w-full max-w-[520px] overflow-hidden rounded-3xl border border-[#C6A84A]/25 bg-[#111514] shadow-2xl">
+      <div className="relative w-full max-w-[520px] overflow-visible rounded-3xl border border-[#C6A84A]/25 bg-[#111514] shadow-2xl">
         {/* Top gold gradient accent bar */}
         <div
           aria-hidden="true"
-          className="h-1 w-full bg-gradient-to-r from-[#A88F3A] via-[#D4BA6A] to-[#A88F3A]"
+          className="h-1 w-full rounded-t-3xl bg-gradient-to-r from-[#A88F3A] via-[#D4BA6A] to-[#A88F3A]"
         />
 
         {/* Close Button */}
@@ -215,13 +379,16 @@ export function BookingModal({
                     value={form.fullName}
                     onChange={(e) => {
                       setForm({ ...form, fullName: e.target.value });
-                      if (errors.fullName) setErrors({ ...errors, fullName: undefined });
+                      if (errors.fullName)
+                        setErrors({ ...errors, fullName: undefined });
                     }}
                     placeholder="Enter your full name"
                     className={inputBaseClass}
                   />
                   {errors.fullName && (
-                    <p className="mt-1 text-xs text-red-400">{errors.fullName}</p>
+                    <p className="mt-1 text-xs text-red-400">
+                      {errors.fullName}
+                    </p>
                   )}
                 </div>
 
@@ -240,13 +407,16 @@ export function BookingModal({
                       value={form.email}
                       onChange={(e) => {
                         setForm({ ...form, email: e.target.value });
-                        if (errors.email) setErrors({ ...errors, email: undefined });
+                        if (errors.email)
+                          setErrors({ ...errors, email: undefined });
                       }}
                       placeholder="you@example.com"
                       className={inputBaseClass}
                     />
                     {errors.email && (
-                      <p className="mt-1 text-xs text-red-400">{errors.email}</p>
+                      <p className="mt-1 text-xs text-red-400">
+                        {errors.email}
+                      </p>
                     )}
                   </div>
 
@@ -264,109 +434,62 @@ export function BookingModal({
                       value={form.phone}
                       onChange={(e) => {
                         setForm({ ...form, phone: e.target.value });
-                        if (errors.phone) setErrors({ ...errors, phone: undefined });
+                        if (errors.phone)
+                          setErrors({ ...errors, phone: undefined });
                       }}
                       placeholder="+44 or +1..."
                       className={inputBaseClass}
                     />
                     {errors.phone && (
-                      <p className="mt-1 text-xs text-red-400">{errors.phone}</p>
+                      <p className="mt-1 text-xs text-red-400">
+                        {errors.phone}
+                      </p>
                     )}
                   </div>
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="booking-class-for"
-                    className="mb-1.5 block text-xs font-medium text-[#D1D5DB]"
-                  >
-                    Who is the class for? <span className="text-[#C6A84A]">*</span>
-                  </label>
-                  <select
-                    id="booking-class-for"
-                    required
-                    value={form.classFor}
-                    onChange={(e) => {
-                      const val = e.target.value as AudiencePreset;
-                      setForm({ ...form, classFor: val });
-                      if (errors.classFor) setErrors({ ...errors, classFor: undefined });
-                    }}
-                    className={`${inputBaseClass} bg-[#171C1B]`}
-                  >
-                    <option value="">Select an option</option>
-                    <option value="My Child">My Child</option>
-                    <option value="Myself (Adult)">Myself (Adult)</option>
-                    <option value="Myself (New Muslim / Revert)">
-                      Myself (New Muslim / Revert)
-                    </option>
-                    <option value="Multiple Family Members">
-                      Multiple Family Members
-                    </option>
-                  </select>
-                  {errors.classFor && (
-                    <p className="mt-1 text-xs text-red-400">{errors.classFor}</p>
-                  )}
-                </div>
+                <DarkSelect
+                  id="booking-class-for"
+                  label="Who is the class for?"
+                  placeholder="Select an option"
+                  value={form.classFor}
+                  options={AUDIENCE_OPTIONS}
+                  onChange={(val) => {
+                    setForm({ ...form, classFor: val as AudiencePreset });
+                    if (errors.classFor)
+                      setErrors({ ...errors, classFor: undefined });
+                  }}
+                  error={errors.classFor}
+                />
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div>
-                    <label
-                      htmlFor="booking-age"
-                      className="mb-1.5 block text-xs font-medium text-[#D1D5DB]"
-                    >
-                      Student Age <span className="text-[#C6A84A]">*</span>
-                    </label>
-                    <select
-                      id="booking-age"
-                      required
-                      value={form.studentAge}
-                      onChange={(e) => {
-                        setForm({ ...form, studentAge: e.target.value });
-                        if (errors.studentAge)
-                          setErrors({ ...errors, studentAge: undefined });
-                      }}
-                      className={`${inputBaseClass} bg-[#171C1B]`}
-                    >
-                      <option value="">Select age range</option>
-                      <option value="4 to 7">4 to 7</option>
-                      <option value="8 to 12">8 to 12</option>
-                      <option value="13 to 17">13 to 17</option>
-                      <option value="18+ (Adult)">18+ (Adult)</option>
-                    </select>
-                    {errors.studentAge && (
-                      <p className="mt-1 text-xs text-red-400">{errors.studentAge}</p>
-                    )}
-                  </div>
+                  <DarkSelect
+                    id="booking-age"
+                    label="Student Age"
+                    placeholder="Select age range"
+                    value={form.studentAge}
+                    options={AGE_OPTIONS}
+                    onChange={(val) => {
+                      setForm({ ...form, studentAge: val });
+                      if (errors.studentAge)
+                        setErrors({ ...errors, studentAge: undefined });
+                    }}
+                    error={errors.studentAge}
+                  />
 
-                  <div>
-                    <label
-                      htmlFor="booking-timezone"
-                      className="mb-1.5 block text-xs font-medium text-[#D1D5DB]"
-                    >
-                      Your Timezone <span className="text-[#C6A84A]">*</span>
-                    </label>
-                    <select
-                      id="booking-timezone"
-                      required
-                      value={form.timezone}
-                      onChange={(e) => {
-                        setForm({ ...form, timezone: e.target.value });
-                        if (errors.timezone)
-                          setErrors({ ...errors, timezone: undefined });
-                      }}
-                      className={`${inputBaseClass} bg-[#171C1B]`}
-                    >
-                      <option value="">Select timezone</option>
-                      <option value="UK (GMT/BST)">UK (GMT/BST)</option>
-                      <option value="USA East (EST)">USA East (EST)</option>
-                      <option value="USA Central (CST)">USA Central (CST)</option>
-                      <option value="USA West (PST)">USA West (PST)</option>
-                      <option value="Other">Other</option>
-                    </select>
-                    {errors.timezone && (
-                      <p className="mt-1 text-xs text-red-400">{errors.timezone}</p>
-                    )}
-                  </div>
+                  <DarkSelect
+                    id="booking-timezone"
+                    label="Your Timezone"
+                    placeholder="Select timezone"
+                    value={form.timezone}
+                    options={TIMEZONE_OPTIONS}
+                    onChange={(val) => {
+                      setForm({ ...form, timezone: val });
+                      if (errors.timezone)
+                        setErrors({ ...errors, timezone: undefined });
+                    }}
+                    error={errors.timezone}
+                  />
                 </div>
 
                 <div className="pt-2">
@@ -378,7 +501,8 @@ export function BookingModal({
                     {submitting ? 'Submitting Request...' : 'Claim My Free Trial'}
                   </button>
                   <p className="mt-3 text-center text-xs text-[#9CA3AF]">
-                    No credit card required · 100% free · We will contact you within 24hrs
+                    No credit card required · 100% free · We will contact you
+                    within 24hrs
                   </p>
                 </div>
               </form>
@@ -399,7 +523,8 @@ export function BookingModal({
                 Your free trial request has been received.
               </p>
               <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-[#9CA3AF]">
-                A member of our team will reach out within 24 hours to confirm your session.
+                A member of our team will reach out within 24 hours to confirm
+                your session.
               </p>
 
               <div className="mx-auto mt-6 max-w-xs space-y-2.5 rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-left text-sm text-[#D1D5DB]">
@@ -420,7 +545,11 @@ export function BookingModal({
               <p className="mt-4 text-xs text-[#9CA3AF]">
                 Need immediate assistance? Email{' '}
                 <a
-                  href="mailto:ilmoraonline@gmail.com"
+                  href={`mailto:ilmoraonline@gmail.com?subject=${encodeURIComponent(
+                    `Free Trial Request - ${form.fullName}`
+                  )}&body=${encodeURIComponent(
+                    `Name: ${form.fullName}\nEmail: ${form.email}\nWhatsApp/Phone: ${form.phone}\nClass For: ${form.classFor}\nStudent Age: ${form.studentAge}\nTimezone: ${form.timezone}`
+                  )}`}
                   className="text-[#C6A84A] underline underline-offset-2 hover:text-[#D4BA6A]"
                 >
                   ilmoraonline@gmail.com
